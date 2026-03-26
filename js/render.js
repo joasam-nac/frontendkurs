@@ -1,11 +1,21 @@
 import {
   $,
   formatPrice,
-  getCartCount,
-  getCartTotal,
   getCategories,
   getFilteredProducts,
 } from "./shared.js";
+
+const truncateWords = (text = "", maxLength = 80) => {
+  if (text.length <= maxLength) return text;
+
+  const shortened = text.slice(0, maxLength);
+  const lastSpace = shortened.lastIndexOf(" ");
+
+  return `${(lastSpace > 0
+    ? shortened.slice(0, lastSpace)
+    : shortened
+  ).trim()}...`;
+};
 
 export const ui = {
   categoryList: $("category-list"),
@@ -28,20 +38,6 @@ const pillColors = [
   "bg-cyan-400 text-black",
 ];
 
-const categoryTemplate = (category, selectedCategory, index) => `
-  <button
-    type="button"
-    data-category="${category}"
-    class="${
-      selectedCategory === category
-        ? "bg-black text-white"
-        : pillColors[index % pillColors.length]
-    } rounded-full border-4 border-black px-4 py-2 text-sm font-black shadow-[4px_4px_0_0_#000] transition hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none"
-  >
-    ${category}
-  </button>
-`;
-
 const cardColors = [
   "bg-pink-200",
   "bg-cyan-200",
@@ -51,96 +47,124 @@ const cardColors = [
   "bg-rose-200",
 ];
 
-const productTemplate = (product, index) => `
-  <article
-    class="flex h-full flex-col overflow-hidden rounded-3xl border-4 border-black ${
-      cardColors[index % cardColors.length]
-    } shadow-[8px_8px_0_0_#000]"
-  >
-    <div class="border-b-4 border-black bg-white">
-      <img
-        src="${product.image}"
-        alt="${product.name}"
-        class="h-56 w-full object-contain p-6"
-      />
-    </div>
+const createCategoryButton = (category, selectedCategory, index) => {
+  const button = document.createElement("button");
 
-    <div class="flex flex-1 flex-col p-5">
-      <p class="text-xs font-black uppercase tracking-wide text-red-600">
-        ${(product.categories ?? []).join(", ")}
-      </p>
+  button.type = "button";
+  button.dataset.category = category;
+  button.textContent = category;
+  button.className = `${
+    selectedCategory === category
+      ? "bg-black text-white"
+      : pillColors[index % pillColors.length]
+  } rounded-full border-4 border-black px-4 py-2 text-sm font-black shadow-[4px_4px_0_0_#000] transition hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none`;
 
-      <h3 class="mt-2 text-lg font-black text-black">
-        ${product.name}
-      </h3>
+  return button;
+};
 
-      <p class="mt-3 flex-grow text-sm leading-6 text-gray-800">
-        ${product.description}
-      </p>
+const createProductCard = (product, index, hasCartItem) => {
+  const article = document.createElement("article");
+  article.className = `flex h-full flex-col overflow-hidden rounded-3xl border-4 border-black ${
+    cardColors[index % cardColors.length]
+  } shadow-[8px_8px_0_0_#000]`;
 
-      <div class="mt-5 flex items-center justify-between gap-4">
-        <p class="text-base font-black text-blue-700">
-          ${formatPrice(product.price)}
-        </p>
+  const imageWrapper = document.createElement("div");
+  imageWrapper.className = "border-b-4 border-black bg-white";
 
-        <button
-          type="button"
-          data-add="${product.id}"
-          class="inline-flex items-center rounded-2xl border-4 border-black bg-blue-500 px-4 py-2 text-sm font-black text-white shadow-[4px_4px_0_0_#000] transition hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none"
-        >
-          Lägg i kundvagn
-        </button>
-      </div>
-    </div>
-  </article>
-`;
+  const img = document.createElement("img");
+  img.src = product.image;
+  img.alt = product.name;
+  img.className = "h-56 w-full object-contain p-6";
 
-const cartItemTemplate = (item) => `
-  <div
-    class="flex items-center gap-3 rounded-2xl border-4 border-black bg-white p-3 shadow-[4px_4px_0_0_#000]"
-  >
-    <img
-      src="${item.image}"
-      alt="${item.name}"
-      class="h-16 w-16 rounded-xl border-2 border-black bg-yellow-100 object-cover"
-    />
+  imageWrapper.appendChild(img);
 
-    <div class="min-w-0 flex-1">
-      <div class="truncate text-sm font-black text-black">
-        ${item.name}
-      </div>
-      <div class="mt-1 text-sm text-gray-700">
-        ${formatPrice(item.price)} x ${item.quantity}
-      </div>
-    </div>
+  const content = document.createElement("div");
+  content.className = "flex flex-1 flex-col p-5";
 
-    <div class="flex items-center gap-2">
-      <button
-        type="button"
-        data-id="${item.id}"
-        data-change="-1"
-        aria-label="Minska antal för ${item.name}"
-        class="inline-flex h-8 w-8 items-center justify-center rounded-xl border-2 border-black bg-red-400 text-sm font-black text-white"
-      >
-        -
-      </button>
+  const categories = document.createElement("p");
+  categories.className =
+    "text-xs font-black uppercase tracking-wide text-red-600";
+  categories.textContent = (product.categories ?? []).join(", ");
 
-      <span class="min-w-5 text-center text-sm font-black text-black">
-        ${item.quantity}
-      </span>
+  const title = document.createElement("h3");
+  title.className = "mt-2 text-lg font-black text-black";
+  title.textContent = product.name;
 
-      <button
-        type="button"
-        data-id="${item.id}"
-        data-change="1"
-        aria-label="Öka antal för ${item.name}"
-        class="inline-flex h-8 w-8 items-center justify-center rounded-xl border-2 border-black bg-green-400 text-sm font-black text-black"
-      >
-        +
-      </button>
-    </div>
-  </div>
-`;
+  const description = document.createElement("p");
+  description.className = "mt-3 flex-grow text-sm leading-6 text-gray-800";
+  description.textContent = truncateWords(product.description, 80);
+
+  const footer = document.createElement("div");
+  footer.className = "mt-5 flex items-center justify-between gap-4";
+
+  const price = document.createElement("p");
+  price.className = "text-base font-black text-blue-700";
+  price.textContent = formatPrice(product.price);
+
+  const button = document.createElement("button");
+  button.type = "button";
+  button.dataset.add = product.id;
+  button.disabled = hasCartItem;
+  button.className = hasCartItem
+    ? "inline-flex items-center rounded-2xl border-4 border-black bg-gray-400 px-4 py-2 text-sm font-black text-white opacity-60"
+    : "inline-flex items-center rounded-2xl border-4 border-black bg-blue-500 px-4 py-2 text-sm font-black text-white shadow-[4px_4px_0_0_#000] transition hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none";
+  button.textContent = hasCartItem ? "Redan vald" : "Lägg i kundvagn";
+
+  footer.appendChild(price);
+  footer.appendChild(button);
+
+  content.appendChild(categories);
+  content.appendChild(title);
+  content.appendChild(description);
+  content.appendChild(footer);
+
+  article.appendChild(imageWrapper);
+  article.appendChild(content);
+
+  return article;
+};
+
+const createCartItem = (item) => {
+  const wrapper = document.createElement("div");
+  wrapper.className =
+    "flex items-center gap-3 rounded-2xl border-4 border-black bg-white p-3 shadow-[4px_4px_0_0_#000]";
+
+  const img = document.createElement("img");
+  img.src = item.image;
+  img.alt = item.name;
+  img.className =
+    "h-16 w-16 rounded-xl border-2 border-black bg-yellow-100 object-cover";
+
+  const content = document.createElement("div");
+  content.className = "min-w-0 flex-1";
+
+  const name = document.createElement("div");
+  name.className = "truncate text-sm font-black text-black";
+  name.textContent = item.name;
+
+  const meta = document.createElement("div");
+  meta.className = "mt-1 text-sm text-gray-700";
+  meta.textContent = formatPrice(item.price);
+
+  content.appendChild(name);
+  content.appendChild(meta);
+
+  const controls = document.createElement("div");
+  controls.className = "flex items-center gap-2";
+
+  wrapper.appendChild(img);
+  wrapper.appendChild(content);
+  wrapper.appendChild(controls);
+
+  return wrapper;
+};
+
+const createEmptyMessage = (text, className) => {
+  const p = document.createElement("p");
+  p.className = className;
+  p.textContent = text;
+  return p;
+};
 
 export const setCartOpen = (open) => {
   ui.cartDropdown.classList.toggle("hidden", !open);
@@ -148,45 +172,68 @@ export const setCartOpen = (open) => {
 };
 
 export const renderCategories = (state) => {
-  ui.categoryList.innerHTML = getCategories(state.products)
-    .map((category, index) =>
-      categoryTemplate(category, state.selectedCategory, index)
-    )
-    .join("");
+  ui.categoryList.replaceChildren();
+
+  const categories = getCategories(state.products);
+
+  categories.forEach((category, index) => {
+    ui.categoryList.appendChild(
+      createCategoryButton(category, state.selectedCategory, index)
+    );
+  });
 };
 
 export const renderProducts = (state) => {
+  ui.productList.replaceChildren();
+
   const products = getFilteredProducts(
     state.products,
     state.selectedCategory
   );
 
-  ui.productList.innerHTML = products.length
-    ? products.map((product, index) => productTemplate(product, index)).join("")
-    : `
-      <p class="rounded-2xl border-4 border-black bg-white p-4 text-sm font-bold italic text-gray-700 shadow-[4px_4px_0_0_#000]">
-        Inga produkter hittades i denna kategori.
-      </p>
-    `;
+  if (!products.length) {
+    ui.productList.appendChild(
+      createEmptyMessage(
+        "Inga produkter hittades i denna kategori.",
+        "rounded-2xl border-4 border-black bg-white p-4 text-sm font-bold italic text-gray-700 shadow-[4px_4px_0_0_#000]"
+      )
+    );
+    return;
+  }
+
+  const hasCartItem = state.cart.length > 0;
+
+  products.forEach((product, index) => {
+    ui.productList.appendChild(
+      createProductCard(product, index, hasCartItem)
+    );
+  });
 };
 
 export const renderCart = (cart) => {
-  ui.cartItems.innerHTML = cart.length
-    ? cart.map(cartItemTemplate).join("")
-    : `
-      <p class="rounded-2xl border-4 border-black bg-yellow-100 p-4 text-sm font-bold italic text-gray-800 shadow-[4px_4px_0_0_#000]">
-        Kundvagnen är tom.
-      </p>
-    `;
+  ui.cartItems.replaceChildren();
 
-  ui.cartTotal.textContent = formatPrice(getCartTotal(cart));
-  ui.cartCount.textContent = getCartCount(cart);
+  const item = cart[0];
 
-  const isEmpty = cart.length === 0;
+  if (!item) {
+    ui.cartItems.appendChild(
+      createEmptyMessage(
+        "Kundvagnen är tom.",
+        "rounded-2xl border-4 border-black bg-yellow-100 p-4 text-sm font-bold italic text-gray-800 shadow-[4px_4px_0_0_#000]"
+      )
+    );
+  } else {
+    ui.cartItems.appendChild(createCartItem(item));
+  }
+
+  ui.cartTotal.textContent = item ? formatPrice(item.price) : formatPrice(0);
+  ui.cartCount.textContent = item ? "1" : "0";
+
+  const isEmpty = !item;
 
   ui.checkoutLink.classList.toggle("pointer-events-none", isEmpty);
   ui.checkoutLink.classList.toggle("opacity-50", isEmpty);
-  ui.cartCount.classList.toggle("hidden", getCartCount(cart) === 0);
+  ui.cartCount.classList.toggle("hidden", isEmpty);
 };
 
 export const render = (state) => {

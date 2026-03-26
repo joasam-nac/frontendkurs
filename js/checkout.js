@@ -14,6 +14,7 @@ const ui = {
   total: $("checkout-total"),
   form: $("checkout-form"),
   message: $("message"),
+  emptyCartButton: $("empty-cart-btn"),
   fields: {
     name: $("name"),
     email: $("email"),
@@ -192,6 +193,24 @@ function decreaseQuantity(itemId) {
   renderCheckoutCart();
 }
 
+function removeItemCompletely(itemId) {
+  cart = cart.filter((item) => String(item.id) !== String(itemId));
+
+  if (!cart.length) {
+    clearCartStorage();
+  } else {
+    saveCart(cart);
+  }
+
+  renderCheckoutCart();
+}
+
+function emptyCart() {
+  cart = [];
+  clearCartStorage();
+  renderCheckoutCart();
+}
+
 function renderCheckoutCart() {
   if (!cart.length) {
     clearCartStorage();
@@ -239,6 +258,16 @@ function renderCheckoutCart() {
               +
             </button>
 
+            <button
+              type="button"
+              data-action="remove"
+              data-id="${item.id}"
+              aria-label="Ta bort ${item.name} från kundvagnen"
+              class="inline-flex items-center rounded-xl border-2 border-black bg-red-600 px-3 py-1 text-xs font-black text-white"
+            >
+              Ta bort
+            </button>
+
             <strong class="text-sm font-black text-blue-700">
               ${formatPrice(item.price * item.quantity)}
             </strong>
@@ -280,6 +309,14 @@ ui.items.addEventListener("click", (event) => {
   if (action === "decrease") {
     decreaseQuantity(id);
   }
+
+  if (action === "remove") {
+    removeItemCompletely(id);
+  }
+});
+
+ui.emptyCartButton.addEventListener("click", () => {
+  emptyCart();
 });
 
 Object.entries(ui.fields).forEach(([fieldName, field]) => {

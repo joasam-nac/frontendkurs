@@ -34,24 +34,36 @@
       class="mx-auto grid max-w-7xl grid-cols-1 gap-6 px-4 py-8 sm:px-6 lg:grid-cols-2 lg:px-8"
     >
       <section
-        class="rounded-3xl border-4 border-black bg-pink-100 p-6 shadow-[8px_8px_0_0_#000]"
-      >
-        <div class="border-b-4 border-black pb-4">
-          <h2 class="text-2xl font-black text-blue-600">Kundvagn</h2>
-          <p class="mt-1 text-sm text-gray-700">Kontrollera din beställning</p>
-        </div>
+  class="rounded-3xl border-4 border-black bg-pink-100 p-6 shadow-[8px_8px_0_0_#000]"
+>
+  <div class="border-b-4 border-black pb-4">
+    <h2 class="text-2xl font-black text-blue-600">Kundvagn</h2>
+    <p class="mt-1 text-sm text-gray-700">Kontrollera din beställning</p>
+  </div>
 
-        <div id="checkout-cart-items" class="mt-4 space-y-3"></div>
+  <div class="mt-4 flex items-center justify-between gap-3">
+    <span class="text-sm font-bold text-gray-800">Produkter</span>
 
-        <div
-          class="mt-6 flex items-center justify-between border-t-4 border-black pt-4"
-        >
-          <span class="text-sm font-bold text-gray-800">Totalt</span>
-          <strong id="checkout-total" class="text-lg font-black text-black">
-            0.00 kr
-          </strong>
-        </div>
-      </section>
+    <button
+      type="button"
+      id="empty-cart-btn"
+      class="inline-flex items-center rounded-2xl border-4 border-black bg-red-400 px-4 py-2 text-sm font-black text-white shadow-[4px_4px_0_0_#000] transition hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none"
+    >
+      Töm kundvagn
+    </button>
+  </div>
+
+  <div id="checkout-cart-items" class="mt-4 space-y-3"></div>
+
+  <div
+    class="mt-6 flex items-center justify-between border-t-4 border-black pt-4"
+  >
+    <span class="text-sm font-bold text-gray-800">Totalt</span>
+    <strong id="checkout-total" class="text-lg font-black text-black">
+      0.00 kr
+    </strong>
+  </div>
+</section>
 
       <section
         class="rounded-3xl border-4 border-black bg-cyan-100 p-6 shadow-[8px_8px_0_0_#000]"

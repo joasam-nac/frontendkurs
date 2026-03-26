@@ -17,20 +17,28 @@ const state = {
 async function loadItems() {
   try {
     const response = await fetch("https://fakestoreapi.com/products");
+    
 
     if (!response.ok) {
       throw new Error("Could not load products from Fake Store API");
     }
 
     const products = await response.json();
+    console.log(products);
 
     state.products = products.map((item) => ({
-      id: item.id,
-      name: item.title,
-      price: item.price,
-      description: item.description,
-      categories: [item.category],
-      image: item.image,
+    id: item.id,
+    title: item.title,
+    name: item.title,
+    price: item.price,
+    description: item.description,
+    category: item.category,
+    categories: [item.category],
+    image: item.image,
+    rating: {
+        rate: item.rating?.rate ?? 0,
+        count: item.rating?.count ?? 0,
+    },
     }));
 
     render(state);

@@ -1,314 +1,306 @@
 import {
   $,
   formatPrice,
+  getCart,
+  getCartCount,
+  getCartTotal,
   getCategories,
   getFilteredProducts,
 } from "./shared.js";
 
-const truncateWords = (text = "", maxLength = 80) => {
-  if (text.length <= maxLength) return text;
-
-  const shortened = text.slice(0, maxLength);
-  const lastSpace = shortened.lastIndexOf(" ");
-
-  return `${(lastSpace > 0
-    ? shortened.slice(0, lastSpace)
-    : shortened
-  ).trim()}...`;
-};
-
 export const ui = {
   categoryList: $("category-list"),
   productList: $("product-list"),
+  cartToggle: $("cart-toggle"),
+  cartDropdown: $("cart-dropdown"),
   cartItems: $("cart-items"),
   cartTotal: $("cart-total"),
   cartCount: $("cart-count"),
   clearCartBtn: $("clear-cart-btn"),
   checkoutLink: $("checkout-link"),
-  cartToggle: $("cart-toggle"),
-  cartDropdown: $("cart-dropdown"),
 };
 
-const pillColors = [
-  "bg-red-400 text-white",
-  "bg-blue-400 text-white",
-  "bg-green-400 text-black",
-  "bg-pink-400 text-black",
-  "bg-orange-400 text-black",
-  "bg-cyan-400 text-black",
+const CATEGORY_THEMES = [
+  {
+    activeButton: "bg-yellow-300 text-black",
+    inactiveButton: "bg-yellow-200 text-black",
+    card: "bg-yellow-200",
+  },
+  {
+    activeButton: "bg-blue-500 text-white",
+    inactiveButton: "bg-blue-300 text-black",
+    card: "bg-blue-200",
+  },
+  {
+    activeButton: "bg-pink-500 text-white",
+    inactiveButton: "bg-pink-300 text-black",
+    card: "bg-pink-200",
+  },
+  {
+    activeButton: "bg-green-500 text-white",
+    inactiveButton: "bg-green-300 text-black",
+    card: "bg-green-200",
+  },
+  {
+    activeButton: "bg-purple-500 text-white",
+    inactiveButton: "bg-purple-300 text-black",
+    card: "bg-purple-200",
+  },
+  {
+    activeButton: "bg-cyan-500 text-white",
+    inactiveButton: "bg-cyan-300 text-black",
+    card: "bg-cyan-200",
+  },
 ];
 
-const cardColors = [
-  "bg-pink-200",
-  "bg-cyan-200",
-  "bg-yellow-200",
-  "bg-green-200",
-  "bg-orange-200",
-  "bg-rose-200",
-];
-
-const getProductName = (product) => product.title || product.name || "";
-
-const getProductCategory = (product) => {
-  if (product.category) {
-    return product.category;
-  }
-
-  if (Array.isArray(product.categories)) {
-    return product.categories.join(", ");
-  }
-
-  return "";
+const FALLBACK_THEME = {
+  activeButton: "bg-gray-400 text-black",
+  inactiveButton: "bg-gray-200 text-black",
+  card: "bg-gray-100",
 };
 
-const getCategoryColor = (category) => {
-  const normalized = category.trim().toLowerCase();
+const getCategoryTheme = (category, categories) => {
+  const index = categories.indexOf(category);
 
-  let hash = 0;
-
-  for (let i = 0; i < normalized.length; i += 1) {
-    hash = normalized.charCodeAt(i) + ((hash << 5) - hash);
+  if (index === -1) {
+    return FALLBACK_THEME;
   }
 
-  return cardColors[Math.abs(hash) % cardColors.length];
+  return CATEGORY_THEMES[index % CATEGORY_THEMES.length];
 };
 
-const createCategoryButton = (category, selectedCategory) => {
+const createCategoryButton = (category, isActive, categories) => {
   const button = document.createElement("button");
+  const theme = getCategoryTheme(category, categories);
 
   button.type = "button";
   button.dataset.category = category;
+  button.className = [
+    "rounded-2xl border-4 border-black px-4 py-2 text-sm font-black",
+    isActive ? theme.activeButton : theme.inactiveButton,
+    isActive
+      ? "translate-x-[1px] translate-y-[1px] shadow-[2px_2px_0_0_#000]"
+      : "shadow-[4px_4px_0_0_#000] transition hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none",
+  ].join(" ");
   button.textContent = category;
-  button.className = `${
-    selectedCategory === category
-      ? "bg-black text-white"
-      : `${getCategoryColor(category)} text-black`
-  } rounded-full border-4 border-black px-4 py-2 text-sm font-black shadow-[4px_4px_0_0_#000] transition hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none`;
 
   return button;
 };
 
-const createProductCard = (product, isInCart) => {
+const createProductCard = (product, categories) => {
   const article = document.createElement("article");
-  article.className = `flex h-full flex-col overflow-hidden rounded-3xl border-4 border-black ${getCategoryColor(
-    getProductCategory(product)
-  )} shadow-[8px_8px_0_0_#000]`;
+  const theme = getCategoryTheme(product.category, categories);
 
-  const imageWrapper = document.createElement("div");
-  imageWrapper.className = "border-b-4 border-black bg-white";
+  article.className = [
+    "flex flex-col rounded-3xl border-4 border-black p-5",
+    theme.card,
+    "shadow-[6px_6px_0_0_#000]",
+  ].join(" ");
+
+  const link = document.createElement("a");
+  link.href = `./product.html?id=${product.id}`;
+  link.className = "block";
 
   const img = document.createElement("img");
   img.src = product.image;
-  img.alt = getProductName(product);
-  img.className = "h-56 w-full object-contain p-6";
-
-  imageWrapper.appendChild(img);
-
-  const content = document.createElement("div");
-  content.className = "flex flex-1 flex-col p-5";
+  img.alt = product.title;
+  img.className = "mb-4 h-48 w-full object-contain";
 
   const category = document.createElement("p");
-  category.className =
-    "text-xs font-black uppercase tracking-wide text-red-600";
-  category.textContent = getProductCategory(product);
+  category.className = "text-xs font-black uppercase text-red-600";
+  category.textContent = product.category;
 
   const title = document.createElement("h3");
-  title.className = "mt-2 text-lg font-black text-black";
-  title.textContent = getProductName(product);
+  title.className = "mt-2 text-lg font-black";
+  title.textContent = product.title;
 
   const description = document.createElement("p");
-  description.className = "mt-3 flex-grow text-sm leading-6 text-gray-800";
-  description.textContent = truncateWords(product.description, 80);
+  description.className = "mt-2 text-sm text-gray-700";
+  description.textContent = product.description;
 
-  const rating = document.createElement("p");
-  rating.className = "mt-3 text-sm font-bold text-gray-700";
-  rating.textContent = `Betyg: ${product.rating?.rate ?? 0} (${
-    product.rating?.count ?? 0
-  } recensioner)`;
+  link.appendChild(img);
+  link.appendChild(category);
+  link.appendChild(title);
+  link.appendChild(description);
 
   const footer = document.createElement("div");
-  footer.className = "mt-5 flex items-center justify-between gap-4";
+  footer.className = "mt-4 flex items-center justify-between gap-3";
 
-  const price = document.createElement("p");
-  price.className = "text-base font-black text-blue-700";
+  const price = document.createElement("strong");
+  price.className = "text-lg font-black text-blue-700";
   price.textContent = formatPrice(product.price);
 
   const button = document.createElement("button");
   button.type = "button";
   button.dataset.add = product.id;
-  button.disabled = isInCart;
-  button.className = isInCart
-    ? "inline-flex items-center rounded-2xl border-4 border-black bg-gray-400 px-4 py-2 text-sm font-black text-white opacity-60"
-    : "inline-flex items-center rounded-2xl border-4 border-black bg-blue-500 px-4 py-2 text-sm font-black text-white shadow-[4px_4px_0_0_#000] transition hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none";
-  button.textContent = isInCart ? "Redan vald" : "Lägg i kundvagn";
+  button.className =
+    "inline-flex items-center rounded-2xl border-4 border-black bg-blue-500 px-4 py-2 text-sm font-black text-white shadow-[4px_4px_0_0_#000] transition hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none";
+  button.textContent = "Lägg i kundvagn";
 
   footer.appendChild(price);
   footer.appendChild(button);
 
-  content.appendChild(category);
-  content.appendChild(title);
-  content.appendChild(description);
-  content.appendChild(rating);
-  content.appendChild(footer);
-
-  article.appendChild(imageWrapper);
-  article.appendChild(content);
+  article.appendChild(link);
+  article.appendChild(footer);
 
   return article;
 };
 
-const createQuantityButton = (label, id, change, className) => {
-  const button = document.createElement("button");
-  button.type = "button";
-  button.dataset.id = id;
-  button.dataset.change = change;
-  button.textContent = label;
-  button.className = className;
-
-  return button;
-};
-
 const createCartItem = (item) => {
-  const wrapper = document.createElement("div");
-  wrapper.className =
-    "flex items-center gap-3 rounded-2xl border-4 border-black bg-white p-3 shadow-[4px_4px_0_0_#000]";
+  const row = document.createElement("div");
+  row.className =
+    "rounded-2xl border-4 border-black bg-white p-4 shadow-[4px_4px_0_0_#000]";
 
-  const img = document.createElement("img");
-  img.src = item.image;
-  img.alt = getProductName(item);
-  img.className =
-    "h-16 w-16 rounded-xl border-2 border-black bg-yellow-100 object-contain p-1";
+  const top = document.createElement("div");
+  top.className = "flex items-start justify-between gap-3";
 
-  const content = document.createElement("div");
-  content.className = "min-w-0 flex-1";
+  const info = document.createElement("div");
+  info.className = "min-w-0";
 
-  const name = document.createElement("div");
-  name.className = "truncate text-sm font-black text-black";
-  name.textContent = getProductName(item);
+  const title = document.createElement("h3");
+  title.className = "truncate text-sm font-black text-black";
+  title.textContent = item.title;
 
-  const meta = document.createElement("div");
-  meta.className = "mt-1 text-sm text-gray-700";
-  meta.textContent = `${formatPrice(item.price)} x ${item.quantity}`;
+  const price = document.createElement("p");
+  price.className = "mt-1 text-sm font-bold text-blue-700";
+  price.textContent = formatPrice(item.price);
 
-  content.appendChild(name);
-  content.appendChild(meta);
+  info.appendChild(title);
+  info.appendChild(price);
+
+  const lineTotal = document.createElement("strong");
+  lineTotal.className = "text-sm font-black text-black";
+  lineTotal.textContent = formatPrice(item.price * item.quantity);
+
+  top.appendChild(info);
+  top.appendChild(lineTotal);
 
   const controls = document.createElement("div");
-  controls.className = "flex items-center gap-2";
+  controls.className = "mt-3 flex items-center gap-2";
 
-  const decreaseBtn = createQuantityButton(
-    "-",
-    item.id,
-    -1,
-    "inline-flex h-8 w-8 items-center justify-center rounded-xl border-2 border-black bg-red-300 text-lg font-black"
-  );
+  const decrease = document.createElement("button");
+  decrease.type = "button";
+  decrease.dataset.id = item.id;
+  decrease.dataset.change = "-1";
+  decrease.className =
+    "inline-flex h-8 w-8 items-center justify-center rounded-xl border-2 border-black bg-white font-black text-black";
+  decrease.textContent = "−";
 
   const quantity = document.createElement("span");
-  quantity.className = "min-w-[2rem] text-center text-sm font-black";
+  quantity.className = "min-w-8 text-center text-sm font-black text-black";
   quantity.textContent = String(item.quantity);
 
-  const increaseBtn = createQuantityButton(
-    "+",
-    item.id,
-    1,
-    "inline-flex h-8 w-8 items-center justify-center rounded-xl border-2 border-black bg-green-300 text-lg font-black"
-  );
+  const increase = document.createElement("button");
+  increase.type = "button";
+  increase.dataset.id = item.id;
+  increase.dataset.change = "1";
+  increase.className =
+    "inline-flex h-8 w-8 items-center justify-center rounded-xl border-2 border-black bg-white font-black text-black";
+  increase.textContent = "+";
 
-  controls.appendChild(decreaseBtn);
+  const remove = document.createElement("button");
+  remove.type = "button";
+  remove.dataset.id = item.id;
+  remove.dataset.change = String(-item.quantity);
+  remove.className =
+    "ml-auto inline-flex items-center rounded-xl border-2 border-black bg-red-500 px-3 py-1 text-xs font-black text-white";
+  remove.textContent = "Ta bort";
+
+  controls.appendChild(decrease);
   controls.appendChild(quantity);
-  controls.appendChild(increaseBtn);
+  controls.appendChild(increase);
+  controls.appendChild(remove);
 
-  wrapper.appendChild(img);
-  wrapper.appendChild(content);
-  wrapper.appendChild(controls);
+  row.appendChild(top);
+  row.appendChild(controls);
 
-  return wrapper;
-};
-
-const createEmptyMessage = (text, className) => {
-  const p = document.createElement("p");
-  p.className = className;
-  p.textContent = text;
-  return p;
-};
-
-export const setCartOpen = (open) => {
-  ui.cartDropdown.classList.toggle("hidden", !open);
-  ui.cartToggle.setAttribute("aria-expanded", String(open));
+  return row;
 };
 
 export const renderCategories = (state) => {
+  if (!ui.categoryList) {
+    return;
+  }
+
   ui.categoryList.replaceChildren();
 
   const categories = getCategories(state.products);
 
-  categories.forEach((category, index) => {
+  categories.forEach((category) => {
     ui.categoryList.appendChild(
-      createCategoryButton(category, state.selectedCategory, index)
+      createCategoryButton(
+        category,
+        category === state.selectedCategory,
+        categories
+      )
     );
   });
 };
 
 export const renderProducts = (state) => {
+  if (!ui.productList) {
+    return;
+  }
+
   ui.productList.replaceChildren();
 
-  const products = getFilteredProducts(
+  const categories = getCategories(state.products);
+  const filteredProducts = getFilteredProducts(
     state.products,
     state.selectedCategory
   );
 
-  if (!products.length) {
-    ui.productList.appendChild(
-      createEmptyMessage(
-        "Inga produkter hittades i denna kategori.",
-        "rounded-2xl border-4 border-black bg-white p-4 text-sm font-bold italic text-gray-700 shadow-[4px_4px_0_0_#000]"
-      )
-    );
+  if (!filteredProducts.length) {
+    const empty = document.createElement("p");
+    empty.className =
+      "rounded-2xl border-4 border-black bg-white p-4 font-bold shadow-[4px_4px_0_0_#000]";
+    empty.textContent = "Inga produkter hittades.";
+    ui.productList.appendChild(empty);
     return;
   }
 
-  products.forEach((product) => {
-    const isInCart = state.cart.some((item) => item.id === product.id);
-
-    ui.productList.appendChild(createProductCard(product, isInCart));
+  filteredProducts.forEach((product) => {
+    ui.productList.appendChild(createProductCard(product, categories));
   });
 };
 
 export const renderCart = (cart) => {
+  if (!ui.cartItems || !ui.cartTotal || !ui.cartCount) {
+    return;
+  }
+
+  const count = getCartCount(cart);
+
+  ui.cartCount.textContent = String(count);
+  ui.cartCount.classList.toggle("hidden", count === 0);
+
   ui.cartItems.replaceChildren();
 
   if (!cart.length) {
-    ui.cartItems.appendChild(
-      createEmptyMessage(
-        "Kundvagnen är tom.",
-        "rounded-2xl border-4 border-black bg-yellow-100 p-4 text-sm font-bold italic text-gray-800 shadow-[4px_4px_0_0_#000]"
-      )
-    );
+    const empty = document.createElement("p");
+    empty.className = "text-sm font-bold text-gray-700";
+    empty.textContent = "Kundvagnen är tom.";
+    ui.cartItems.appendChild(empty);
   } else {
     cart.forEach((item) => {
       ui.cartItems.appendChild(createCartItem(item));
     });
   }
 
-  const total = cart.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  );
+  ui.cartTotal.textContent = formatPrice(getCartTotal(cart));
+};
 
-  const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+export const setCartOpen = (open) => {
+  if (!ui.cartToggle || !ui.cartDropdown) {
+    return;
+  }
 
-  ui.cartTotal.textContent = formatPrice(total);
-  ui.cartCount.textContent = String(totalCount);
-
-  const isEmpty = cart.length === 0;
-
-  ui.checkoutLink.classList.toggle("pointer-events-none", isEmpty);
-  ui.checkoutLink.classList.toggle("opacity-50", isEmpty);
-  ui.cartCount.classList.toggle("hidden", isEmpty);
+  ui.cartDropdown.classList.toggle("hidden", !open);
+  ui.cartToggle.setAttribute("aria-expanded", String(open));
 };
 
 export const render = (state) => {
   renderCategories(state);
   renderProducts(state);
-  renderCart(state.cart);
+  renderCart(getCart());
 };

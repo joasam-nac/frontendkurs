@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="sv">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>Produkt - Grupp 10</title>
+    <link rel="icon" type="image/x-icon" href="cart.ico">
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="min-h-screen bg-amber-50 text-gray-900">
+    <header class="sticky top-0 z-40 border-b-4 border-black bg-yellow-300">
+  <div
+    class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8"
+  >
+    <div>
+      <a href="./index.html" class="block">
+        <h1 class="text-3xl font-black tracking-tight text-red-600">
+          Grupp 10s webbshop
+        </h1>
+      </a>
+      <p class="mt-1 text-sm font-medium text-gray-800">
+        Säljer allt viktigt DU behöver!
+      </p>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <a
+        href="./index.html"
+        class="inline-flex items-center rounded-2xl border-4 border-black bg-white px-4 py-2 text-sm font-bold text-black shadow-[4px_4px_0_0_#000] transition hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none"
+      >
+        ← Tillbaka
+      </a>
+
+      <div class="relative">
+        <button
+          id="cart-toggle"
+          type="button"
+          aria-label="Öppna kundvagn"
+          aria-expanded="false"
+          aria-controls="cart-dropdown"
+          class="relative inline-flex h-12 w-12 items-center justify-center rounded-2xl border-4 border-black bg-blue-500 text-white shadow-[4px_4px_0_0_#000] transition hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none"
+        >
+          <svg class="h-5 w-5" viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M3 4h2l2.2 9.2a1 1 0 0 0 1 .8h8.7a1 1 0 0 0 1-.7L21 7H7"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+            <circle cx="10" cy="19" r="1.5" fill="currentColor" />
+            <circle cx="17" cy="19" r="1.5" fill="currentColor" />
+          </svg>
+
+          <span
+            id="cart-count"
+            class="absolute -right-2 -top-2 hidden min-w-6 rounded-full border-2 border-black bg-red-500 px-1.5 text-center text-xs font-bold leading-5 text-white"
+          >
+            0
+          </span>
+        </button>
+
+        <div
+          id="cart-dropdown"
+          class="absolute right-0 top-16 z-50 hidden w-96 max-w-[calc(100vw-2rem)] overflow-hidden rounded-3xl border-4 border-black bg-white shadow-[8px_8px_0_0_#000]"
+        >
+          <div class="border-b-4 border-black bg-red-500 px-5 py-4 text-white">
+            <h2 class="text-lg font-black">Kundvagn</h2>
+            <p class="mt-1 text-sm">Produkter du har lagt till</p>
+          </div>
+
+          <div
+            id="cart-items"
+            class="max-h-96 space-y-3 overflow-y-auto bg-white px-5 py-4"
+          ></div>
+
+          <div class="border-t-4 border-black bg-cyan-200 px-5 py-4">
+            <div class="mb-4 flex items-center justify-between">
+              <span class="text-sm font-bold text-gray-800">Totalt</span>
+              <strong id="cart-total" class="text-base font-black text-black">
+                0 kr
+              </strong>
+            </div>
+
+            <div class="flex flex-wrap gap-2">
+              <button
+                id="clear-cart-btn"
+                type="button"
+                class="inline-flex items-center rounded-2xl border-4 border-black bg-white px-4 py-2 text-sm font-bold text-black shadow-[4px_4px_0_0_#000] transition hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none"
+              >
+                Töm kundvagn
+              </button>
+
+              <a
+                id="checkout-link"
+                href="./checkout.html"
+                class="inline-flex items-center rounded-2xl border-4 border-black bg-green-400 px-4 py-2 text-sm font-bold text-black shadow-[4px_4px_0_0_#000] transition hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none"
+              >
+                Till kassan
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+    <main class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <section
+        class="rounded-3xl border-4 border-black bg-white p-6 shadow-[8px_8px_0_0_#000]"
+      >
+        <div id="product-detail"></div>
+      </section>
+
+      <section
+        class="mt-8 rounded-3xl border-4 border-black bg-white p-6 shadow-[8px_8px_0_0_#000]"
+      >
+        <h2 class="text-2xl font-black text-blue-600">
+          Senast visade produkter
+        </h2>
+
+        <div
+          id="recent-products"
+          class="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5"
+        ></div>
+      </section>
+    </main>
+
+    <script type="module" src="./js/product.js"></script>
+  </body>
+</html>

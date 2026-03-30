@@ -1,9 +1,6 @@
-import { addToCart } from "./cart.js";
-import { initCartUi } from "./cart-ui.js";
 import { normalizeProduct, saveStoredProducts } from "./shared.js";
 import {
   render,
-  renderCart,
   renderCategories,
   renderProducts,
   ui,
@@ -67,13 +64,9 @@ function setupPageEvents() {
       if (!product) {
         return;
       }
-
-      const updatedCart = addToCart(product);
-      renderCart(updatedCart);
     });
   }
 }
 
-initCartUi();
 setupPageEvents();
 loadItems();

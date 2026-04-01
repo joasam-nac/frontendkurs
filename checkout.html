@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="sv">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>Checkout - Grupp 10</title>
+    <link rel="icon" type="image/x-icon" href="cart.ico" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="module" src="./js/checkout.js" defer></script>
+  </head>
+  <body class="min-h-screen bg-amber-50 text-gray-900">
+    <header class="sticky top-0 z-40 border-b-4 border-black bg-yellow-300">
+      <div
+        class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8"
+      >
+        <div>
+          <h1 class="text-3xl font-black tracking-tight text-red-600">
+            Grupp 10s webbshop
+          </h1>
+          <p class="mt-1 text-sm font-medium text-gray-800">
+            Säljer allt viktigt DU behöver!
+          </p>
+        </div>
+      </div>
+    </header>
+
+    <main class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+      <section
+        class="rounded-3xl border-4 border-black bg-white p-6 shadow-[8px_8px_0_0_#000]"
+      >
+        <div class="grid gap-8 lg:grid-cols-2">
+          <div>
+            <h2 class="text-2xl font-black text-blue-600">Din produkt</h2>
+            <div id="checkout-product" class="mt-4"></div>
+          </div>
+
+          <div>
+            <h2 class="text-2xl font-black text-red-600">Dina uppgifter</h2>
+
+            <form id="checkout-form" class="mt-4 flex flex-col gap-4">
+              <div>
+                <label for="name" class="mb-2 block text-sm font-black">
+                  Namn
+                </label>
+                <input
+                  id="name"
+                  name="name"
+                  type="text"
+                  class="w-full rounded-2xl border-4 border-black bg-yellow-100 px-4 py-3 font-medium outline-none"
+                />
+              </div>
+
+              <div>
+                <label for="address" class="mb-2 block text-sm font-black">
+                  Adress
+                </label>
+                <input
+                  id="address"
+                  name="address"
+                  type="text"
+                  class="w-full rounded-2xl border-4 border-black bg-blue-100 px-4 py-3 font-medium outline-none"
+                />
+              </div>
+
+              <button
+                type="submit"
+                class="inline-flex w-fit items-center rounded-2xl border-4 border-black bg-green-500 px-5 py-3 text-sm font-black text-white shadow-[4px_4px_0_0_#000] transition hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none"
+              >
+                Slutför köp
+              </button>
+            </form>
+
+            <p id="form-message" class="mt-4"></p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>

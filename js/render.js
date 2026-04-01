@@ -137,9 +137,8 @@ const createProductCard = (product, categories) => {
   price.className = "text-lg font-black text-blue-700";
   price.textContent = formatPrice(product.price);
 
-  const button = document.createElement("button");
-  button.type = "button";
-  button.dataset.add = product.id;
+  const button = document.createElement("a");
+  button.href = `./checkout.html?id=${product.id}`;
   button.className =
     "inline-flex items-center rounded-2xl border-4 border-black bg-blue-500 px-4 py-2 text-sm font-black text-white shadow-[4px_4px_0_0_#000] transition hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none";
   button.textContent = "Köp";

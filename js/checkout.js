@@ -1,10 +1,33 @@
 import { formatPrice, getProductImage, getStoredProducts } from "./shared.js";
+import { pattern } from "./patterns.js";
 
 const checkoutProduct = document.getElementById("checkout-product");
 const checkoutForm = document.getElementById("checkout-form");
+const submitCartButton = document.getElementById("submitCart");
 const formMessage = document.getElementById("form-message");
 const nameInput = document.getElementById("name");
-const addressInput = document.getElementById("address");
+const emailInput = document.getElementById("email");
+const numberInput = document.getElementById("number");
+const streetInput = document.getElementById("street");
+const postalInput = document.getElementById("postal");
+const cityInput = document.getElementById("city");
+
+const state = {
+  name: false,
+  email: false,
+  number: false,
+  street: false,
+  postal: false,
+  city: false,
+};
+const stateMessage = {
+  name: "Fel namn",
+  email: "Fel epost",
+  number: "Fel nummer",
+  street: "Fel street",
+  postal: "Fel postal",
+  city: "Fel city",
+};
 
 let selectedProduct = null;
 
@@ -86,28 +109,6 @@ const renderProduct = (product) => {
   checkoutProduct.appendChild(article);
 };
 
-const validateForm = () => {
-  const name = nameInput?.value.trim() ?? "";
-  const address = addressInput?.value.trim() ?? "";
-
-  if (!name || !address) {
-    renderFormMessage("Fyll i namn och adress.");
-    return false;
-  }
-
-  if (name.length < 2) {
-    renderFormMessage("Namnet måste vara minst 2 tecken.");
-    return false;
-  }
-
-  if (address.length < 5) {
-    renderFormMessage("Adressen måste vara minst 5 tecken.");
-    return false;
-  }
-
-  return true;
-};
-
 const init = () => {
   const productId = getProductIdFromUrl();
 
@@ -122,7 +123,7 @@ const init = () => {
   if (!products.length) {
     document.title = "Produkter saknas - Grupp 10";
     renderProductMessage(
-      "Kunde inte hitta produkter i localStorage. Gå tillbaka till startsidan först."
+      "Kunde inte hitta produkter i localStorage. Gå tillbaka till startsidan först.",
     );
     return;
   }
@@ -149,13 +150,45 @@ if (checkoutForm) {
       return;
     }
 
-    if (!validateForm()) {
-      return;
-    }
-
     renderFormMessage(`Köp genomfört för ${selectedProduct.title}.`, true);
     checkoutForm.reset();
   });
+
+  checkoutForm.addEventListener("input", (e) => {
+    const input = e.target.closest("[data-validate]");
+    if (!input) return;
+
+    validate(input);
+  });
+}
+
+function validate(input) {
+  if (!input) return;
+
+  const inputField = input.dataset.validate;
+  const isValid = pattern[inputField].test(input.value);
+  state[inputField] = isValid;
+  if (!isValid) {
+    renderFormMessage(stateMessage[inputField]);
+    console.log("FEL!");
+  } else {
+    renderFormMessage("Fyll i dina uppgifter för att slutföra köpet.");
+    console.log("RÄTT");
+  }
+  input.classList.toggle("bg-green-50", isValid);
+  input.classList.toggle("bg-red-400", !isValid);
+
+  updateButton();
+}
+
+function updateButton() {
+  if (Object.values(state).every(Boolean)) {
+    submitCartButton.disabled = false;
+    console.log("Button Enabled");
+  } else {
+    submitCartButton.disabled = true;
+    console.log("Button Disabled");
+  }
 }
 
 renderFormMessage("Fyll i dina uppgifter för att slutföra köpet.");

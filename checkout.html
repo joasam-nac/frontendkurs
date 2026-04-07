@@ -1,11 +1,8 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="sv">
   <head>
     <meta charset="UTF-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Checkout - Grupp 10</title>
     <link rel="icon" type="image/x-icon" href="cart.ico" />
     <script src="https://cdn.tailwindcss.com"></script>
@@ -37,7 +34,7 @@
             <div id="checkout-product" class="mt-4"></div>
           </div>
 
-          <div>
+          <div">
             <h2 class="text-2xl font-black text-red-600">Dina uppgifter</h2>
 
             <form id="checkout-form" class="mt-4 flex flex-col gap-4">
@@ -47,6 +44,7 @@
                 </label>
                 <input
                   id="name"
+                  data-validate="name"
                   name="name"
                   type="text"
                   class="w-full rounded-2xl border-4 border-black bg-yellow-100 px-4 py-3 font-medium outline-none"
@@ -54,20 +52,74 @@
               </div>
 
               <div>
-                <label for="address" class="mb-2 block text-sm font-black">
-                  Adress
+                <label for="email" class="mb-2 block text-sm font-black">
+                  E-post
                 </label>
                 <input
-                  id="address"
-                  name="address"
+                  id="email"
+                  data-validate="email"
+                  name="email"
                   type="text"
                   class="w-full rounded-2xl border-4 border-black bg-blue-100 px-4 py-3 font-medium outline-none"
                 />
               </div>
 
-              <button
+              <div>
+                <label for="number" class="mb-2 block text-sm font-black">
+                  Telefon
+                </label>
+                <input
+                  id="number"
+                  data-validate="number"
+                  name="number"
+                  type="text"
+                  class="w-full rounded-2xl border-4 border-black bg-blue-100 px-4 py-3 font-medium outline-none"
+                />
+              </div>
+
+              <div>
+                <label for="street" class="mb-2 block text-sm font-black">
+                  Gatuaddress
+                </label>
+                <input
+                  id=""
+                  data-validate="street"
+                  name="street"
+                  type="text"
+                  class="w-full rounded-2xl border-4 border-black bg-blue-100 px-4 py-3 font-medium outline-none"
+                />
+              </div>
+
+              <div>
+                <label for="postal" class="mb-2 block text-sm font-black">
+                  Postnummer
+                </label>
+                <input
+                  id="postal"
+                  data-validate="postal"
+                  name="postal"
+                  type="text"
+                  class="w-full rounded-2xl border-4 border-black bg-blue-100 px-4 py-3 font-medium outline-none"
+                />
+              </div>
+
+              <div>
+                <label for="city" class="mb-2 block text-sm font-black">
+                  Ort
+                </label>
+                <input
+                  id="city"
+                  data-validate="city"
+                  name="city"
+                  type="text"
+                  class="w-full rounded-2xl border-4 border-black bg-blue-100 px-4 py-3 font-medium outline-none"
+                />
+              </div>
+              
+              <button id="submitCart"
                 type="submit"
-                class="inline-flex w-fit items-center rounded-2xl border-4 border-black bg-green-500 px-5 py-3 text-sm font-black text-white shadow-[4px_4px_0_0_#000] transition hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none"
+                disabled
+                class="inline-flex w-fit items-center rounded-2xl border-4 border-black bg-green-500 px-5 py-3 text-sm font-black text-white shadow-[4px_4px_00#000] transition hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Slutför köp
               </button>

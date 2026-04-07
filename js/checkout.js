@@ -152,6 +152,11 @@ if (checkoutForm) {
 
     renderFormMessage(`Köp genomfört för ${selectedProduct.title}.`, true);
     checkoutForm.reset();
+    submitCartButton.disabled = true;
+    Object.keys(state).forEach((key) => {
+      state[key] = false;
+    });
+    console.log("state");
   });
 
   checkoutForm.addEventListener("input", (e) => {

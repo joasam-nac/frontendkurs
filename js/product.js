@@ -144,6 +144,12 @@ const renderProductDetail = (product) => {
   price.className = "mt-6 text-3xl font-black text-blue-700";
   price.textContent = product.price;
 
+  const button = document.createElement("a");
+  button.href = `./checkout.html?id=${product.id}`;
+  button.className =
+    "inline-flex items-center rounded-2xl border-4 border-black bg-blue-500 px-4 py-2 text-sm font-black text-white shadow-[4px_4px_0_0_#000] transition hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none";
+  button.textContent = "Köp";
+
   content.appendChild(category);
   content.appendChild(title);
   content.appendChild(description);
@@ -152,9 +158,11 @@ const renderProductDetail = (product) => {
   content.appendChild(price);
   //content.appendChild(specsTitle);
   content.appendChild(renderSpecs(product.specs));
+  content.appendChild(button);
 
   wrapper.appendChild(imageBox);
   wrapper.appendChild(content);
+
 
   productDetail.appendChild(wrapper);
 };

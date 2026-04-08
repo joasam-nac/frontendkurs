@@ -77,11 +77,11 @@ const createCategoryButton = (category, isActive, categories) => {
   button.type = "button";
   button.dataset.category = category;
   button.className = [
-    "rounded-md border-2 border-black px-4 py-2 text-sm font-black",
+    "rounded-2xl border-4 border-black px-4 py-2 text-sm font-black",
     isActive ? theme.activeButton : theme.inactiveButton,
     isActive
-      ? "translate-x-[1px] translate-y-[1px] "
-      : "transition hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none",
+      ? "translate-x-[1px] translate-y-[1px] shadow-[2px_2px_0_0_#000]"
+      : "shadow-[4px_4px_0_0_#000] transition hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none",
   ].join(" ");
   button.textContent = category;
 
@@ -92,11 +92,11 @@ const createProductCard = (product, categories) => {
   const article = document.createElement("article");
   const categoryName = product.category ?? "okänd";
   const theme = getCategoryTheme(categoryName, categories);
-  article.dataset.id = product.id;
-  article.dataset.action = "increment";
+
   article.className = [
-    "flex h-full flex-col rounded-md border-2 border-black p-5",
+    "flex h-full flex-col rounded-3xl border-4 border-black p-5",
     theme.card,
+    "shadow-[6px_6px_0_0_#000]",
   ].join(" ");
 
   const link = document.createElement("a");
@@ -136,17 +136,11 @@ const createProductCard = (product, categories) => {
   price.className = "text-lg font-black text-blue-700";
   price.textContent = product.price;
 
-  const button = document.createElement("div");
-
+  const button = document.createElement("a");
+  button.href = `./checkout.html?id=${product.id}`;
   button.className =
-    "cursor-pointer inline-flex items-center border-2 rounded-sm border-black bg-blue-500 px-2 py-1 text-sm font-black text-white transition hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none ";
-
-  const text = document.createTextNode("Add to cart");
-  const icon = document.createElement("i");
-
-  icon.className = "fa fa-cart-plus mx-1";
-
-  button.append(text, icon);
+    "inline-flex items-center rounded-2xl border-4 border-black bg-blue-500 px-4 py-2 text-sm font-black text-white shadow-[4px_4px_0_0_#000] transition hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none";
+  button.textContent = "Köp";
 
   footer.appendChild(price);
   footer.appendChild(button);
@@ -192,7 +186,8 @@ export const renderProducts = (state) => {
 
   if (!filteredProducts.length) {
     const empty = document.createElement("p");
-    empty.className = "border-2 border-black bg-white p-4 font-bold ";
+    empty.className =
+      "rounded-2xl border-4 border-black bg-white p-4 font-bold shadow-[4px_4px_0_0_#000]";
     empty.textContent = "Inga produkter hittades.";
     ui.productList.appendChild(empty);
     return;

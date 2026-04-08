@@ -13,5 +13,5 @@ export const pattern = {
   phone: /^(?=.{1,20}$)[0-9-()]+$/,
   street: /^[A-Za-zÅÄÖåäö\s]+ \d+[A-Za-z]?$/,
   postal: /^\d{5}$/,
-  city: /^[A-Za-z]+(-[A-Za-z]+)?$/,
+  city: /^(?=.{2,20}$)[A-Za-z]+(-[A-Za-z]+)?$/,
 };

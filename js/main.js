@@ -33,7 +33,6 @@ async function loadItems() {
       ...product,
       price: formatPrice(product.price),
     }));
-    console.log(products);
 
     saveStoredProducts(state.products);
     render(state);

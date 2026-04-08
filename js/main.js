@@ -1,4 +1,4 @@
-import { saveStoredProducts } from "./shared.js";
+import { saveStoredProducts, formatPrice } from "./shared.js";
 import { render, ui } from "./render.js";
 
 const state = {
@@ -23,11 +23,17 @@ async function loadItems() {
 
     const result = await response.json();
 
-    state.products = Array.isArray(result)
+    const products = Array.isArray(result)
       ? result
       : Array.isArray(result.data)
         ? result.data
         : [];
+
+    state.products = products.map((product) => ({
+      ...product,
+      price: formatPrice(product.price),
+    }));
+    console.log(products);
 
     saveStoredProducts(state.products);
     render(state);

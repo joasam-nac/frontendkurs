@@ -135,7 +135,7 @@ const createProductCard = (product, categories) => {
 
   const price = document.createElement("strong");
   price.className = "text-lg font-black text-blue-700";
-  price.textContent = formatPrice(product.price);
+  price.textContent = product.price;
 
   const button = document.createElement("a");
   button.href = `./checkout.html?id=${product.id}`;
@@ -166,8 +166,8 @@ export const renderCategories = (state) => {
       createCategoryButton(
         category,
         category === state.selectedCategory,
-        categories
-      )
+        categories,
+      ),
     );
   });
 };
@@ -182,7 +182,7 @@ export const renderProducts = (state) => {
   const categories = getCategories(state.products);
   const filteredProducts = getFilteredProducts(
     state.products,
-    state.selectedCategory
+    state.selectedCategory,
   );
 
   if (!filteredProducts.length) {

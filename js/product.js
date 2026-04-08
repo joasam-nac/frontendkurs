@@ -1,5 +1,4 @@
 import {
-  formatPrice,
   getProductImage,
   getRecentlyViewed,
   getStoredProducts,
@@ -41,7 +40,7 @@ const createRecentProductCard = (product) => {
 
   const price = document.createElement("p");
   price.className = "mt-2 text-base font-black text-blue-700";
-  price.textContent = formatPrice(product.price);
+  price.textContent = product.price;
 
   link.appendChild(category);
   link.appendChild(title);
@@ -143,7 +142,7 @@ const renderProductDetail = (product) => {
 
   const price = document.createElement("p");
   price.className = "mt-6 text-3xl font-black text-blue-700";
-  price.textContent = formatPrice(product.price);
+  price.textContent = product.price;
 
   content.appendChild(category);
   content.appendChild(title);
@@ -189,7 +188,7 @@ const init = () => {
   if (!products.length) {
     document.title = "Produkter saknas - Grupp 10";
     renderMessage(
-      "Kunde inte hitta produkter i localStorage. Gå tillbaka till startsidan först."
+      "Kunde inte hitta produkter i localStorage. Gå tillbaka till startsidan först.",
     );
     return;
   }

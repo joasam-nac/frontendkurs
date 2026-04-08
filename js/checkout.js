@@ -1,21 +1,17 @@
-import { formatPrice, getProductImage, getStoredProducts } from "./shared.js";
+import { getProductImage, getStoredProducts } from "./shared.js";
 import { pattern } from "./patterns.js";
+import { renderReceipt } from "./receiptView.js";
 
 const checkoutProduct = document.getElementById("checkout-product");
 const checkoutForm = document.getElementById("checkout-form");
 const submitCartButton = document.getElementById("submitCart");
 const formMessage = document.getElementById("form-message");
-const nameInput = document.getElementById("name");
-const emailInput = document.getElementById("email");
-const numberInput = document.getElementById("number");
-const streetInput = document.getElementById("street");
-const postalInput = document.getElementById("postal");
-const cityInput = document.getElementById("city");
+const userInformation = document.getElementById("user-information");
 
 const state = {
   name: false,
   email: false,
-  number: false,
+  phone: false,
   street: false,
   postal: false,
   city: false,
@@ -23,7 +19,7 @@ const state = {
 const stateMessage = {
   name: "Fel namn",
   email: "Fel epost",
-  number: "Fel nummer",
+  phone: "Fel nummer",
   street: "Fel street",
   postal: "Fel postal",
   city: "Fel city",
@@ -99,7 +95,7 @@ const renderProduct = (product) => {
 
   const price = document.createElement("p");
   price.className = "mt-4 text-lg font-black text-blue-700";
-  price.textContent = formatPrice(product.price);
+  price.textContent = product.price;
 
   article.appendChild(category);
   article.appendChild(title);
@@ -150,13 +146,15 @@ if (checkoutForm) {
       return;
     }
 
-    renderFormMessage(`Köp genomfört för ${selectedProduct.title}.`, true);
-    checkoutForm.reset();
-    submitCartButton.disabled = true;
+    const customer = getCustomerData(checkoutForm);
+
     Object.keys(state).forEach((key) => {
       state[key] = false;
+
+      userInformation.innerHTML = renderReceipt(customer, selectedProduct);
+      submitCartButton.disabled = true;
+      // checkoutForm.reset();
     });
-    console.log("state");
   });
 
   checkoutForm.addEventListener("input", (e) => {
@@ -173,15 +171,15 @@ function validate(input) {
   const inputField = input.dataset.validate;
   const isValid = pattern[inputField].test(input.value);
   state[inputField] = isValid;
+
   if (!isValid) {
     renderFormMessage(stateMessage[inputField]);
-    console.log("FEL!");
   } else {
     renderFormMessage("Fyll i dina uppgifter för att slutföra köpet.");
-    console.log("RÄTT");
   }
-  input.classList.toggle("bg-green-50", isValid);
-  input.classList.toggle("bg-red-400", !isValid);
+
+  input.classList.toggle("bg-green-100", isValid);
+  input.classList.toggle("bg-red-300", !isValid);
 
   updateButton();
 }
@@ -189,11 +187,20 @@ function validate(input) {
 function updateButton() {
   if (Object.values(state).every(Boolean)) {
     submitCartButton.disabled = false;
-    console.log("Button Enabled");
   } else {
     submitCartButton.disabled = true;
-    console.log("Button Disabled");
   }
+}
+
+function getCustomerData(checkoutForm) {
+  return {
+    name: checkoutForm.name.value,
+    email: checkoutForm.email.value,
+    phone: checkoutForm.phone.value,
+    street: checkoutForm.street.value,
+    postal: checkoutForm.postal.value,
+    city: checkoutForm.city.value,
+  };
 }
 
 renderFormMessage("Fyll i dina uppgifter för att slutföra köpet.");

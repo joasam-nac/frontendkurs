@@ -4,6 +4,9 @@ import {
   getStoredProducts,
   saveRecentlyViewed,
 } from "./shared.js";
+import { initClickEvents } from "./events.js";
+
+initClickEvents();
 
 const productDetail = document.getElementById("product-detail");
 const recentProducts = document.getElementById("recent-products");
@@ -18,7 +21,7 @@ const createRecentProductCard = (product) => {
 
   link.href = `./product.html?id=${product.id}`;
   link.className =
-    "rounded-2xl border-4 border-black bg-transparent p-4 shadow-[4px_4px_0_0_#000] transition hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none";
+    "border-2 border-black bg-transparent p-4  transition hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none";
 
   const imageUrl = getProductImage(product);
 
@@ -39,7 +42,7 @@ const createRecentProductCard = (product) => {
   title.textContent = product.title ?? "Okänd produkt";
 
   const price = document.createElement("p");
-  price.className = "mt-2 text-base font-black text-blue-700";
+  price.className = "mt-1 text-base font-black text-blue-700";
   price.textContent = product.price;
 
   link.appendChild(category);
@@ -62,8 +65,7 @@ const renderRecentProducts = (currentProductId) => {
 
   if (!items.length) {
     const empty = document.createElement("p");
-    empty.className =
-      "rounded-2xl border-4 border-black bg-white p-4 font-bold shadow-[4px_4px_0_0_#000]";
+    empty.className = "border-2 border-black bg-white p-4 font-bold ";
     empty.textContent = "Inga tidigare visade produkter ännu.";
     recentProducts.appendChild(empty);
     return;
@@ -82,11 +84,10 @@ const renderProductDetail = (product) => {
   productDetail.replaceChildren();
 
   const wrapper = document.createElement("div");
-  wrapper.className = "grid gap-8 md:grid-cols-2";
+  wrapper.className = "grid gap-5 md:grid-cols-2";
 
   const imageBox = document.createElement("div");
-  imageBox.className =
-    "rounded-3xl border-4 border-black bg-transparent p-6 shadow-[4px_4px_0_0_#000]";
+  imageBox.className = "border-2 border-black bg-transparent p-6 ";
 
   const imageUrl = getProductImage(product);
 
@@ -109,7 +110,7 @@ const renderProductDetail = (product) => {
   title.textContent = product.title ?? "Okänd produkt";
 
   const description = document.createElement("p");
-  description.className = "mt-4 text-lg leading-7 text-gray-700";
+  description.className = "mt-4 text-md leading-7 text-gray-700";
   description.textContent =
     product.description ?? "Ingen beskrivning tillgänglig.";
 
@@ -121,11 +122,19 @@ const renderProductDetail = (product) => {
   price.className = "mt-6 text-3xl font-black text-blue-700";
   price.textContent = product.price;
 
-  const button = document.createElement("a");
-  button.href = `./checkout.html?id=${product.id}`;
+  const button = document.createElement("div");
+  button.dataset.id = product.id;
+  button.dataset.action = "increment";
+
   button.className =
-    "inline-flex items-center rounded-2xl border-4 border-black bg-blue-500 px-4 py-2 text-sm font-black text-white shadow-[4px_4px_0_0_#000] transition hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none";
-  button.textContent = "Köp";
+    "cursor-pointer inline-flex items-center border-2 rounded-sm border-black bg-blue-500 px-2 py-1 text-sm font-black text-white transition hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none ";
+
+  const text = document.createTextNode("Add to cart");
+  const icon = document.createElement("i");
+
+  icon.className = "fa fa-cart-plus mx-1 ";
+
+  button.append(text, icon);
 
   content.appendChild(category);
   content.appendChild(title);
@@ -136,7 +145,6 @@ const renderProductDetail = (product) => {
 
   wrapper.appendChild(imageBox);
   wrapper.appendChild(content);
-
 
   productDetail.appendChild(wrapper);
 };
@@ -149,8 +157,7 @@ const renderMessage = (text) => {
   productDetail.replaceChildren();
 
   const message = document.createElement("p");
-  message.className =
-    "rounded-2xl border-4 border-black bg-white p-4 font-bold shadow-[4px_4px_0_0_#000]";
+  message.className = "border-2 border-black bg-white p-4 font-bold ";
   message.textContent = text;
 
   productDetail.appendChild(message);

@@ -1,4 +1,4 @@
-import { getProductImage, getStoredProducts } from "./shared.js";
+import { getProductImage, getStoredProducts } from "../shared.js";
 import { pattern } from "./patterns.js";
 import { renderReceipt } from "./receiptView.js";
 
@@ -40,8 +40,7 @@ const renderProductMessage = (message) => {
   checkoutProduct.replaceChildren();
 
   const text = document.createElement("p");
-  text.className =
-    "rounded-2xl border-4 border-black bg-yellow-100 p-4 font-bold shadow-[4px_4px_0_0_#000]";
+  text.className = "border-2 border-black bg-yellow-100 p-4 font-bold";
   text.textContent = message;
 
   checkoutProduct.appendChild(text);
@@ -54,7 +53,7 @@ const renderFormMessage = (message, success = false) => {
 
   formMessage.textContent = message;
   formMessage.className = [
-    "mt-4 rounded-2xl border-4 border-black p-4 font-bold shadow-[4px_4px_0_0_#000]",
+    "mt-4 border-2 border-black p-4 font-bold ",
     success ? "bg-green-200 text-black" : "bg-pink-100 text-black",
   ].join(" ");
 };
@@ -67,8 +66,7 @@ const renderProduct = (product) => {
   checkoutProduct.replaceChildren();
 
   const article = document.createElement("article");
-  article.className =
-    "rounded-3xl border-4 border-black bg-blue-100 p-5 shadow-[6px_6px_0_0_#000]";
+  article.className = "border-2 border-black bg-blue-100 p-5 ";
 
   const imageUrl = getProductImage(product);
 
@@ -179,7 +177,7 @@ function validate(input) {
   }
 
   input.classList.toggle("bg-green-100", isValid);
-  input.classList.toggle("bg-red-300", !isValid);
+  input.classList.toggle("bg-red-200", !isValid);
 
   updateButton();
 }

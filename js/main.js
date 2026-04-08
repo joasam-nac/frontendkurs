@@ -1,6 +1,5 @@
 import { saveStoredProducts, formatPrice } from "./shared.js";
 import { render, ui } from "./render.js";
-import { actions } from "./actions.js";
 
 const state = {
   products: [],
@@ -12,7 +11,7 @@ const PRODUCTS_API = "https://fakestoreapi.samuelsson.sh/products";
 async function loadItems() {
   if (ui.productList) {
     ui.productList.innerHTML =
-      '<p class="border-2 border-black bg-white p-4 font-bold ">Laddar produkter...</p>';
+      '<p class="rounded-2xl border-4 border-black bg-white p-4 font-bold shadow-[4px_4px_0_0_#000]">Laddar produkter...</p>';
   }
 
   try {
@@ -42,7 +41,7 @@ async function loadItems() {
 
     if (ui.productList) {
       ui.productList.innerHTML =
-        '<p class="border-2 border-black bg-white p-4 font-bold ">Could not load products.</p>';
+        '<p class="rounded-2xl border-4 border-black bg-white p-4 font-bold shadow-[4px_4px_0_0_#000]">Could not load products.</p>';
     }
   }
 }
@@ -57,14 +56,6 @@ function setupPageEvents() {
 
     state.selectedCategory = button.dataset.category;
     render(state);
-  });
-  ui.productList?.addEventListener("click", (event) => {
-    const button = event.target.closest("[data-action]");
-    const { action, id } = button.dataset;
-
-    if (!button) return;
-
-    actions[action]?.(id);
   });
 }
 

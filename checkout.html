@@ -6,7 +6,7 @@
     <title>Checkout - Grupp 10</title>
     <link rel="icon" type="image/x-icon" href="cart.ico" />
     <script src="https://cdn.tailwindcss.com"></script>
-    <script type="module" src="./js/checkout/checkout.js" defer></script>
+    <script type="module" src="./js/checkout.js" defer></script>
   </head>
   <body class="min-h-screen bg-amber-50 text-gray-900">
     <header class="sticky top-0 z-40 border-b-4 border-black bg-yellow-300">
@@ -22,18 +22,14 @@
             Säljer allt viktigt DU behöver!
           </p>
         </div>
-                <div class="flex items-center gap-3">
-          <a
-            href="./index.html"
-            class="inline-flex items-center border-2 border-black bg-white px-4 py-2 text-sm font-bold text-black transition hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none"
-          >
-            ← Tillbaka
-          </a>
       </div>
     </header>
 
     <main class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-      <section class="border-2 border-black bg-white p-6" id="user-information">
+      <section
+        class="rounded-3xl border-4 border-black bg-white p-6 shadow-[8px_8px_0_0_#000]"
+        id="user-information"
+      >
         <div class="grid gap-8 lg:grid-cols-2">
           <div>
             <h2 class="text-2xl font-black text-blue-600">Din produkt</h2>
@@ -53,7 +49,7 @@
                   data-validate="name"
                   name="name"
                   type="text"
-                  class="w-full border-2 border-black bg-yellow-500/20 px-4 py-3 font-medium outline-none"
+                  class="w-full rounded-2xl border-4 border-black bg-yellow-500/20 px-4 py-3 font-medium outline-none"
                 />
               </div>
 
@@ -66,7 +62,7 @@
                   data-validate="email"
                   name="email"
                   type="text"
-                  class="w-full border-2 border-black bg-yellow-500/20 px-4 py-3 font-medium outline-none"
+                  class="w-full rounded-2xl border-4 border-black bg-yellow-500/20 px-4 py-3 font-medium outline-none"
                 />
               </div>
 
@@ -79,7 +75,7 @@
                   data-validate="phone"
                   name="phone"
                   type="text"
-                  class="w-full border-2 border-black bg-yellow-500/20 px-4 py-3 font-medium outline-none"
+                  class="w-full rounded-2xl border-4 border-black bg-yellow-500/20 px-4 py-3 font-medium outline-none"
                 />
               </div>
 
@@ -92,7 +88,7 @@
                   data-validate="street"
                   name="street"
                   type="text"
-                  class="w-full border-2 border-black bg-yellow-500/20 px-4 py-3 font-medium outline-none"
+                  class="w-full rounded-2xl border-4 border-black bg-yellow-500/20 px-4 py-3 font-medium outline-none"
                 />
               </div>
 
@@ -105,7 +101,7 @@
                   data-validate="postal"
                   name="postal"
                   type="text"
-                  class="w-full border-2 border-black bg-yellow-500/20 px-4 py-3 font-medium outline-none"
+                  class="w-full rounded-2xl border-4 border-black bg-yellow-500/20 px-4 py-3 font-medium outline-none"
                 />
               </div>
 
@@ -118,7 +114,7 @@
                   data-validate="city"
                   name="city"
                   type="text"
-                  class="w-full border-2 border-black bg-yellow-500/20 px-4 py-3 font-medium outline-none"
+                  class="w-full rounded-2xl border-4 border-black bg-yellow-500/20 px-4 py-3 font-medium outline-none"
                 />
               </div>
 
@@ -126,7 +122,7 @@
                 id="submitCart"
                 type="submit"
                 disabled
-                class="inline-flex w-fit items-center border-2 border-black bg-green-500 px-5 py-3 text-sm font-black text-white transition active:translate-x-[1px] active:translate-y-[1px] active:shadow-none disabled:cursor-not-allowed disabled:opacity-50"
+                class="inline-flex w-fit items-center rounded-2xl border-4 border-black bg-green-500 px-5 py-3 text-sm font-black text-white shadow-[4px_4px_00#000] transition hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-none disabled:cursor-not-allowed disabled:opacity-50"
               >
                 Slutför köp
               </button>
